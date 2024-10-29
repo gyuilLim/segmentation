@@ -96,7 +96,7 @@ class CityscapesSegmentation(data.Dataset):
     def transform_tr(self, sample):
         composed_transforms = transforms.Compose([
             tr.RandomHorizontalFlip(),
-            # tr.RandomScaleCrop(base_size=self.base_size, crop_size=self.crop_size, fill=255),
+            tr.RandomScaleCrop(base_size=self.base_size, crop_size=self.crop_size, fill=255),
             tr.RandomGaussianBlur(),
             tr.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             tr.ToTensor()])
@@ -106,7 +106,7 @@ class CityscapesSegmentation(data.Dataset):
     def transform_val(self, sample):
 
         composed_transforms = transforms.Compose([
-            # tr.FixScaleCrop(crop_size=self.crop_size),
+            tr.FixScaleCrop(crop_size=self.crop_size),
             tr.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             tr.ToTensor()])
 
@@ -115,7 +115,7 @@ class CityscapesSegmentation(data.Dataset):
     def transform_ts(self, sample):
 
         composed_transforms = transforms.Compose([
-            # tr.FixedResize(size=self.crop_size),
+            tr.FixedResize(size=self.crop_size),
             tr.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             tr.ToTensor()])
 
