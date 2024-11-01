@@ -85,6 +85,56 @@ def calculate_dice_iou(preds, masks) :
 
     return dice.sum() / len(dice), iou.sum() / len(iou)
 
+def calculate_dice_miou(preds, masks, num_classes):
+    smooth = 1
+    iou_list = []
+    dice_list = []
+
+    for i in range(num_classes):
+        pred_i = (preds == i).astype(np.float32)
+        mask_i = (masks == i).astype(np.float32)
+
+        # 이미지에 해당 클래스가 있는지 확인
+        if mask_i.sum().item() == 0 and pred_i.sum().item() == 0:
+            iou_list.append(np.nan)
+            dice_list.append(np.nan)
+        else:
+            # Intersection 및 Union 계산
+            intersection = np.sum(pred_i * mask_i).item()
+            union = np.sum(pred_i).item() + np.sum(mask_i).item() - intersection
+
+            # IoU 및 Dice 계산
+            iou = (intersection + smooth) / (union + smooth)
+            dice = (2 * intersection + smooth) / (np.sum(pred_i).item() + np.sum(mask_i).item() + smooth)
+
+            iou_list.append(iou)
+            dice_list.append(dice)
+
+        
+        # pred_i = (preds == i).astype(np.float32)
+        # mask_i = (masks == i).astype(np.float32)
+
+        # intersection = np.sum(pred_i * mask_i)
+        # union = np.sum(pred_i) + np.sum(mask_i) - intersection
+
+        # # IoU 계산
+        # if union > 0:
+        #     iou = intersection / union
+        # else:
+        #     iou = 0  # union이 0이면 IoU는 0
+            
+        # iou_list.append(iou)
+
+        # # Dice 점수 계산
+        # dice = (2. * intersection + smooth) / (np.sum(pred_i) + np.sum(mask_i) + smooth)
+        # dice_list.append(dice)
+
+    # mIoU와 평균 Dice 점수 계산
+    miou = np.nanmean(iou_list)
+    mean_dice = np.nanmean(dice_list)
+
+    return mean_dice, miou  # 평균 Dice 점수와 mIoU 반환
+
 
 
 
